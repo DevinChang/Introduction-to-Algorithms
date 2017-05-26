@@ -1,6 +1,7 @@
 #include "ex2_1_2.cpp"
 #include "ex2_1_3.cpp"
 #include "ex2_1_4.cpp"
+#include "ex2_2_2.cpp"
 #include <vector>
 
 
@@ -29,6 +30,19 @@ int main() {
 	for (auto &p : iv)
 		std::cout << p << " ";
 	std::cout << std::endl;
+
+	//ex2_2_2
+	std::cout << "ex2_2_2: " << std::endl;
+	std::vector<int> ve{ 2, 3, 6, 1, 9, 7 };
+	//std::cout << "before sort: " << std::endl;
+	for (auto p : ve)
+		std::cout << p << " ";
+	SelectSort(ve);
+	std::cout << std::endl;
+	for (auto p : ve)
+		std::cout << p << " ";
+	std::cout << "\n";
+
 	system("pause");
 	return 0;
 }
