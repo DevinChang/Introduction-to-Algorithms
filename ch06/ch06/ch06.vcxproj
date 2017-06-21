@@ -117,6 +117,7 @@
     <ClCompile Include="ex6_2_2.cpp" />
     <ClCompile Include="ex6_2_5.cpp" />
     <ClCompile Include="ex6_3_1.cpp" />
+    <ClCompile Include="ex6_5_9.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -30,6 +30,9 @@
     <ClCompile Include="ex6_3_1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ex6_5_9.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ex6.h">
