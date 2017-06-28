@@ -2,7 +2,7 @@
 
 //version A
 template<typename It>
-It PartitionA(It beg, It end) {l
+It PartitionA(It beg, It end) {
 	It pivot = end - 1;
 	//int key = *pivot;
 	auto first = beg;
@@ -23,7 +23,7 @@ It PartitionA(It beg, It end) {l
 template<typename It>
 void QuickSort(It beg, It end) {
 	if (end - beg > 1) {
-		auto pivot = PartitionB(beg, end);
+		auto pivot = PartitionA(beg, end);
 		QuickSort(beg, pivot);
 		QuickSort(pivot + 1, end);
 	}
