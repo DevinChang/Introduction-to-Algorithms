@@ -10,5 +10,4 @@ public:
 	T &top() { return *(vec.end() - 1); }
 private:
 	Vector<T> vec;
-	
 };
