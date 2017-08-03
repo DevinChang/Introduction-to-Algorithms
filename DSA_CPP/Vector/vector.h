@@ -35,7 +35,7 @@ public:
 public:
 	//interface
 	void push_back(const T&);
-	T &pop() const { return *--first_free; }
+	T &pop() { return *--first_free; }
 	size_t size() const { return first_free - elements; }
 	size_t capacity() const { return cap - elements; }
 	T *begin() { return elements; }
@@ -45,6 +45,7 @@ public:
 	void resize(size_t n);
 	void resize(size_t n, T &);
 	void reserve(size_t);
+	bool empty();
 private:
 	static std::allocator<T> alloc;
 	void check_n_copy() { if (size() == capacity()) reallocate(); }
@@ -155,6 +156,13 @@ template<typename T>
 void Vector<T>::reserve(size_t n) {
 	if (n > capacity())
 		reallocate(n);
+}
+
+template<typename T>
+inline bool Vector<T>::empty(){
+	if (first_free - elements == 0)
+		return true;
+	return false;
 }
 
 template<typename T>

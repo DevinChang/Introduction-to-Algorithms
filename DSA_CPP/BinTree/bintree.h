@@ -1,14 +1,14 @@
 #pragma once
-
+#include "../Stack/stack.h"
 
 //#define IsRoot(x) (!(x).parent))
 //#define IsLChild(x) (!IsRoot(x) && ((x) == (x).parent->lc))
-#define IsRChild(x) (!IsRoot(x) && ((x) == (x).parent->rc))
-#define HasLChild(x) ((x).lc)
-#define HasRChild(x) ((x).rc)
-#define HasChild(x) (HasLChild(x) || HasRChild(x))
-#define HasBothChild(x) (HasLChild(x) && HasRChild(x))
-#define IsLeaf(x) (!HasChild(x))
+//#define IsRChild(x) (!IsRoot(x) && ((x) == (x).parent->rc))
+//#define HasLChild(x) ((x).lc)
+//#define HasRChild(x) ((x).rc)
+//#define HasChild(x) (HasLChild(x) || HasRChild(x))
+//#define HasBothChild(x) (HasLChild(x) && HasRChild(x))
+//#define IsLeaf(x) (!HasChild(x))
 //brother
 //#define Sibling(p) (IsLChild(*(p)) ? (p)->parent->rc : (p)->parent->lc)
 //uncle
@@ -64,19 +64,44 @@ bool IsLChild (BinNode<T>*);
 
 template<typename N> class BinTree;
 template<typename T>
+bool IsRChild(BinNode<T>*);
+
+template<typename N> class BinTree;
+template<typename T>
 void Release (BinNode<T> *);
 
 template<typename N> class BinTree;
 template<typename T>
 BinNode<T>* FromParentTo (BinNode<T> *);
 
+template<typename N> class BinTree;
+template<typename T>
+bool HasLChild (BinNode<T>*);
+
+template<typename N> class BinTree;
+template<typename T>
+bool HasRChild(BinNode<T>*);
+
+template<typename N> class BinTree;
+template<typename T>
+bool HasChild(BinNode<T>*);
+
+template<typename N> class BinTree;
+template<typename T>
+bool IsLeaf(BinNode<T>*);
+
+
 template<typename T>
 class BinTree {
 	friend bool IsRoot <T>(BinNode<T> *);
 	friend bool IsLChild <T>(BinNode<T>*);
+	friend bool IsRChild <T>(BinNode<T>*);
 	friend void Release <T>(BinNode<T> *);
 	friend BinNode<T>* FromParentTo <T>(BinNode<T> *);
-	
+	friend bool HasLChild <T>(BinNode<T>*);
+	friend bool HasRChild <T>(BinNode<T>*);
+	friend bool HasChild <T>(BinNode<T>*);
+	friend bool IsLeaf <T>(BinNode<T>*);
 public:
 	//constructor
 	BinTree() = default;
@@ -92,14 +117,21 @@ public:
 	//Á¬½Ó×ÓÊ÷
 	BinNode<T>* AttathAsLC(BinNode<T>*, BinTree<T>* &);
 	BinNode<T>* AttathAsRC(BinNode<T>*, BinTree<T>* &);
-
+	//Recursive
 	void TravPreOrder(BinNode<T>*);
 	void TravInOrder(BinNode<T>*);
 	void TravPostOrder(BinNode<T>*);
+	//
+	void TravPreOrderIteration1(BinNode<T>*);
+	void TravPreOrderIteration2(BinNode<T>*);
+	void TravInOrderNoIteration1(BinNode<T>*);
+	void TravInOrderNoIteration2(BinNode<T>*);
+	void TravPostOrderIteration(BinNode<T>*);
 	
 	int Remove(BinNode<T>*);
 	static int RemoveAt(BinNode<T>*);
-
+	static void VisitAlongLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
+	static void GoThroughLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
 protected:
 	int _size;
 	BinNode<T>* _root;
@@ -181,6 +213,63 @@ inline void BinTree<T>::TravPostOrder(BinNode<T>*bt){
 }
 
 template<typename T>
+inline void BinTree<T>::TravPreOrderIteration1(BinNode<T>* p){
+	Stack<BinNode<T>*> s;
+	if (p)
+		s.push(p);
+	while (!s.empty()) {
+		p = s.pop();
+		std::cout << p->data << " ";
+		if (HasRChild(p))
+			s.push(p->rc);
+		if (HasLChild(p))
+			s.push(p->lc);
+	}
+}
+
+template<typename T>
+inline void BinTree<T>::TravPreOrderIteration2(BinNode<T>* p){
+	Stack<BinNode<T>*> s;
+	while (true) {
+		VisitAlongLeftBranch(p, s);
+		if (s.empty())
+			break;
+		p = s.pop();
+	}
+}
+
+template<typename T>
+inline void BinTree<T>::TravInOrderNoIteration1(BinNode<T>* p){
+	Stack<BinNode<T>*> s;
+	while (true) {
+		GoThroughLeftBranch(p, s);
+		if (s.empty())
+			break;
+		p = s.pop();
+		std::cout << p->data << " ";
+		p = p->rc;
+	}
+}
+
+template<typename T>
+inline void BinTree<T>::TravInOrderNoIteration2(BinNode<T>* p){
+	Stack<BinNode<T>*> s;
+	while (true) {
+		if (p) {
+			s.push(p);
+			p = p->lc;
+		}
+		else if (!s.empty()) {
+			p = s.pop();
+			std::cout << p->data << " ";
+			p = p->rc;
+		}
+		else
+			break;
+	}
+}
+
+template<typename T>
 bool IsRoot(BinNode<T>* p){
 	if (!p->parent)
 		return true;
@@ -190,6 +279,13 @@ bool IsRoot(BinNode<T>* p){
 template<typename T>
 bool IsLChild(BinNode<T>*p){
 	if (!IsRoot(p) && p == p->parent->lc)
+		return true;
+	return false;
+}
+
+template<typename T>
+bool IsRChild(BinNode<T>*p) {
+	if (!IsRoot(p) && p == p->parent->rc)
 		return true;
 	return false;
 }
@@ -213,6 +309,35 @@ BinNode<T>* FromParentTo(BinNode<T>* p){
 	return (IsLChild(p) ? p->parent->lc : p->parent->rc);
 }
 
+template <typename T>
+bool HasLChild(BinNode<T>* p){
+	if (!p)
+		return false;
+	if (p->lc)
+		return true;
+	return false;
+}
+
+template <typename T>
+bool HasRChild(BinNode<T>* p) {
+	if (!p)
+		return false;
+	if (p->rc)
+		return true;
+	return false;
+}
+
+template <typename T>
+bool HasChild(BinNode<T>* p) {
+	return HasLChild(p) || HasRChild(p);
+}
+
+template <typename T>
+bool IsLeaf(BinNode<T>* p) {
+	return !HasChild(p);
+}
+
+
 
 template<typename T>
 int BinTree<T>::Remove(BinNode<T>* x) {
@@ -233,6 +358,23 @@ inline int BinTree<T>::RemoveAt(BinNode<T>* x){
 	int n = 1 + RemoveAt(x->lc) + RemoveAt(x->rc);
 	Release(x);
 	return n;
+}
+
+template<typename T>
+inline void BinTree<T>::VisitAlongLeftBranch(BinNode<T>*p, Stack<BinNode<T>*> &s){
+	while (p) {
+		std::cout << p->data << " ";
+		s.push(p->rc);
+		p = p->lc;
+	}
+}
+
+template<typename T>
+inline void BinTree<T>::GoThroughLeftBranch(BinNode<T>* p, Stack<BinNode<T>*>& s){
+	while (p) {
+		s.push(p);
+		p = p->lc;
+	}
 }
 
 
