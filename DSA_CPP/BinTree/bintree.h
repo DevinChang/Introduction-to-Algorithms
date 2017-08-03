@@ -91,6 +91,10 @@ template<typename T>
 bool IsLeaf(BinNode<T>*);
 
 
+template<typename N> class BinTree;
+template<typename T>
+BinNode<T> *Succeed (BinNode<T> *);
+
 template<typename T>
 class BinTree {
 	friend bool IsRoot <T>(BinNode<T> *);
@@ -102,6 +106,7 @@ class BinTree {
 	friend bool HasRChild <T>(BinNode<T>*);
 	friend bool HasChild <T>(BinNode<T>*);
 	friend bool IsLeaf <T>(BinNode<T>*);
+	friend BinNode<T> *Succeed <T>(BinNode<T> *);
 public:
 	//constructor
 	BinTree() = default;
@@ -124,14 +129,17 @@ public:
 	//
 	void TravPreOrderIteration1(BinNode<T>*);
 	void TravPreOrderIteration2(BinNode<T>*);
-	void TravInOrderNoIteration1(BinNode<T>*);
-	void TravInOrderNoIteration2(BinNode<T>*);
+	void TravInOrderIteration1(BinNode<T>*);
+	void TravInOrderIteration2(BinNode<T>*);
+	//space O(1)
+	void TravInOrderIerationNoStack(BinNode<T>*);
 	void TravPostOrderIteration(BinNode<T>*);
 	
 	int Remove(BinNode<T>*);
 	static int RemoveAt(BinNode<T>*);
 	static void VisitAlongLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
 	static void GoThroughLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
+	static void GoToHLVFL(Stack<BinNode<T>*> &);
 protected:
 	int _size;
 	BinNode<T>* _root;
@@ -239,7 +247,7 @@ inline void BinTree<T>::TravPreOrderIteration2(BinNode<T>* p){
 }
 
 template<typename T>
-inline void BinTree<T>::TravInOrderNoIteration1(BinNode<T>* p){
+inline void BinTree<T>::TravInOrderIteration1(BinNode<T>* p){
 	Stack<BinNode<T>*> s;
 	while (true) {
 		GoThroughLeftBranch(p, s);
@@ -252,7 +260,7 @@ inline void BinTree<T>::TravInOrderNoIteration1(BinNode<T>* p){
 }
 
 template<typename T>
-inline void BinTree<T>::TravInOrderNoIteration2(BinNode<T>* p){
+inline void BinTree<T>::TravInOrderIteration2(BinNode<T>* p){
 	Stack<BinNode<T>*> s;
 	while (true) {
 		if (p) {
@@ -266,6 +274,42 @@ inline void BinTree<T>::TravInOrderNoIteration2(BinNode<T>* p){
 		}
 		else
 			break;
+	}
+}
+
+
+template<typename T>
+inline void BinTree<T>::TravInOrderIerationNoStack(BinNode<T>* p){
+	bool backtrack = false;
+	while (true) {
+		if (!backtrack && HasLChild(p))
+			p = p->lc;
+		else {
+			std::cout << p->data << " ";
+			if (HasRChild(p)) {
+				p = p->rc;
+				backtrack = false;
+			}
+			else {
+				p = Succeed(p);
+				if (!p)
+					break;
+				backtrack = true;
+			}
+		}
+	}
+}
+
+template<typename T>
+inline void BinTree<T>::TravPostOrderIteration(BinNode<T>* p){
+	Stack<BinNode<T>*> s;
+	if (p)
+		s.push(p);
+	while (!s.empty()) {
+		if (s.top() != p->parent)
+			GoToHLVFL(s);
+		p = s.pop();
+		std::cout << p->data << " ";
 	}
 }
 
@@ -338,6 +382,23 @@ bool IsLeaf(BinNode<T>* p) {
 }
 
 
+template<typename T>
+BinNode<T>* Succeed(BinNode<T>* p){
+	BinNode<T> *s = p;
+	if (p->rc) {
+		s = p->rc;
+		while(s->lc)
+			s = s->lc;
+	}
+	else {
+		while (IsRChild(s))
+			s = s->parent;
+		s = s->parent;
+	}
+	return s;
+}
+
+
 
 template<typename T>
 int BinTree<T>::Remove(BinNode<T>* x) {
@@ -375,6 +436,20 @@ inline void BinTree<T>::GoThroughLeftBranch(BinNode<T>* p, Stack<BinNode<T>*>& s
 		s.push(p);
 		p = p->lc;
 	}
+}
+
+template<typename T>
+inline void BinTree<T>::GoToHLVFL(Stack<BinNode<T>*>& s){
+	while (auto p = s.top()) {
+		if (HasLChild(p)) {
+			if (HasRChild(p))
+				s.push(p->rc);
+			s.push(p->lc);
+		}
+		else
+			s.push(p->rc);
+	}
+	s.pop();
 }
 
 

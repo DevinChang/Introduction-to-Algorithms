@@ -32,10 +32,16 @@ int main() {
 	bt.TravPreOrderIteration2(bt.Root());
 	std::cout << std::endl;
 	std::cout << "InOrderIteration1: " << std::endl;
-	bt.TravInOrderNoIteration1(bt.Root());
+	bt.TravInOrderIteration1(bt.Root());
 	std::cout << std::endl;
 	std::cout << "InOrderIteration2: " << std::endl;
-	bt.TravInOrderNoIteration2(bt.Root());
+	bt.TravInOrderIteration2(bt.Root());
+	std::cout << std::endl;
+	std::cout << "InOrderIterationNoStack: " << std::endl;
+	bt.TravInOrderIerationNoStack(bt.Root());
+	std::cout << std::endl;
+	std::cout << "PostOrderIteration: " << std::endl;
+	bt.TravPostOrderIteration(bt.Root());
 	std::cout << std::endl;
 	system("pause");
 	return 0;
