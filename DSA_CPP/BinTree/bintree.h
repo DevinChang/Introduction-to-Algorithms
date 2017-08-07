@@ -112,6 +112,7 @@ public:
 	BinTree() = default;
 	BinTree(T const &e) : _size(0), _root(new BinNode<T>(e)){}
 	~BinTree() { Remove(_root); }
+public:
 	//interface
 	int size() { return _size; }
 	bool empty() { return !_root; }
@@ -122,29 +123,32 @@ public:
 	//Á¬½Ó×ÓÊ÷
 	BinNode<T>* AttathAsLC(BinNode<T>*, BinTree<T>* &);
 	BinNode<T>* AttathAsRC(BinNode<T>*, BinTree<T>* &);
-	//Recursive
+	//Recursive Trave
 	void TravPreOrder(BinNode<T>*);
 	void TravInOrder(BinNode<T>*);
 	void TravPostOrder(BinNode<T>*);
-	//
+	//Iterable Trave
 	void TravPreOrderIteration1(BinNode<T>*);
 	void TravPreOrderIteration2(BinNode<T>*);
 	void TravInOrderIteration1(BinNode<T>*);
 	void TravInOrderIteration2(BinNode<T>*);
+	void TravPostOrderIteration(BinNode<T>*);
 	//space O(1)
 	void TravInOrderIerationNoStack(BinNode<T>*);
-	void TravPostOrderIteration(BinNode<T>*);
-	
+	//delete
 	int Remove(BinNode<T>*);
-	static int RemoveAt(BinNode<T>*);
-	static void VisitAlongLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
-	static void GoThroughLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
-	static void GoToHLVFL(Stack<BinNode<T>*> &);
+	//ratation
+	void LeftRotate(BinNode<T>*);
+	void RightRotate(BinNode<T>*);
 protected:
 	int _size;
 	BinNode<T>* _root;
 	int UpdateHeight(BinNode<T>* x);
 	void UpdateHeightAbove(BinNode<T>* x);
+	static int RemoveAt(BinNode<T>*);
+	static void VisitAlongLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
+	static void GoThroughLeftBranch(BinNode<T>*, Stack<BinNode<T>*> &);
+	static void GoToHLVFL(Stack<BinNode<T>*> &);
 };
 
 
@@ -450,6 +454,28 @@ inline void BinTree<T>::GoToHLVFL(Stack<BinNode<T>*>& s){
 			s.push(p->rc);
 	}
 	s.pop();
+}
+
+template<typename T>
+inline void BinTree<T>::LeftRotate(BinNode<T>* x){
+	auto y = x->rc;
+	x->rc = y->lc;
+	if (y->left)
+		y->left->parent = x;
+	y->parent = x->parent;
+	if (x->parent == nullptr)
+		_root = y;
+	else if (x == x->parent->lc)
+		x->parent->lc = y;
+	else
+		x->parent->rc = y;
+	y->lc = x;
+	x->parent = y;
+}
+
+template<typename T>
+inline void BinTree<T>::RightRotate(BinNode<T>*)
+{
 }
 
 
