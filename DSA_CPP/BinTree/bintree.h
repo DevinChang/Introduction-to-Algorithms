@@ -460,10 +460,10 @@ template<typename T>
 inline void BinTree<T>::LeftRotate(BinNode<T>* x){
 	auto y = x->rc;
 	x->rc = y->lc;
-	if (y->left)
-		y->left->parent = x;
+	if (HasLChild(y))
+		y->lc->parent = x;
 	y->parent = x->parent;
-	if (x->parent == nullptr)
+	if (IsRoot(x))
 		_root = y;
 	else if (x == x->parent->lc)
 		x->parent->lc = y;
@@ -474,8 +474,20 @@ inline void BinTree<T>::LeftRotate(BinNode<T>* x){
 }
 
 template<typename T>
-inline void BinTree<T>::RightRotate(BinNode<T>*)
-{
+inline void BinTree<T>::RightRotate(BinNode<T>* x){
+	auto y = x->lc;
+	x->lc = y->rc;
+	if (HasRChild(y))
+		y->rc->parent = x;
+	y->parent = x->parent;
+	if (IsRoot(x))
+		_root = y;
+	else if (x->parent->lc == x)
+		x->parent->lc = y;
+	else
+		x->parent->rc = y;
+	y->rc = x;
+	x->parent = y;
 }
 
 
